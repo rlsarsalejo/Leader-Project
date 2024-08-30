@@ -5,6 +5,8 @@ import EditModal from '../components/Modals/EditDataModal'
 import DeleteModal from '../components/Modals/DeleteDataModal'
 import React,{useEffect, useState} from 'react';
 import { fetchData, createData,editData, removeData } from '../utils/services/apiServices';
+
+
 const main: React.FC = () => {
   
    
@@ -19,10 +21,16 @@ const main: React.FC = () => {
         setIsLoading(true);
         try{
             const data = await fetchData();
-            setLeaders(data);
+            if (Array.isArray(data)) {
+              setLeaders(data);
+          } else {
+              console.error('Expected an array but got:', data);
+              setLeaders([]); // Default to an empty array if data is not an array
+          }
         }catch (error){
             console.error('Failed to load leaders:', error);
             setErrorMessage('Failed to load leaders data.');
+            setLeaders([]);
         }finally{
             setIsLoading(false);
         }
@@ -69,7 +77,7 @@ const main: React.FC = () => {
     const [leaders, setLeaders] = useState<any[]>([]);
      
     //Add new Data using the Modal
-    const addLeader = async (leaderData: {name:string; email:string; phoneNumber:string}) => {
+    const addLeader = async (leaderData: {name:string; email:string; phoneNumber:string; role: string; password:string;}) => {
         try{
             await createData(leaderData);
             loadleaders();
@@ -155,6 +163,7 @@ const main: React.FC = () => {
               <th className="py-3 px-6 text-left">ID</th>
               <th className="py-3 px-6 text-left">Name</th>
               <th className="py-3 px-6 text-center">Email</th>
+              <th className="py-3 px-6 text-center">Roles</th>
               <th className="py-3 px-6 text-center">Phone Number</th>
               <th className="py-3 px-6 text-center">Action</th>
             </tr>
@@ -162,7 +171,7 @@ const main: React.FC = () => {
             <tbody className="text-gray-600 text-sm font-light">
                 {isLoading ? (
                      <tr>
-                     <td colSpan={5} className="py-3 px-6 text-center text-2xl">
+                     <td colSpan={7} className="py-3 px-6 text-center text-2xl">
                          Fetching data pls wait.....
                      </td>
                  </tr>
@@ -189,6 +198,9 @@ const main: React.FC = () => {
                         </td>
                         <td className="py-3 px-6 text-center">
                           <span>{leader.email}</span>
+                        </td>
+                        <td className="py-3 px-6 text-center">
+                          <span>{leader.role}</span>
                         </td>
                         <td className="py-3 px-6 text-center">
                           <span className="bg-purple-200 text-purple-600 py-1 px-3 rounded-full text-lg">

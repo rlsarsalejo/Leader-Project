@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Leaders;
+use Illuminate\Http\Response;
+use App\Http\Requests\StoreLeaderRequest;
+use App\Http\Requests\UpdateLeaderRequest;
 
 class LeaderController extends Controller
 {   
@@ -12,41 +15,40 @@ class LeaderController extends Controller
     //getting all the data from table
    public function index()
    {
-     $leadersData = Leaders::all();
-     return response()->json($leadersData);
+    $leadersData = Leaders::all(); // This should return a collection of leaders
+    return response()->json($leadersData);
    }
 
 
    //add new Leader
-   public function store(Request $request){
+   public function store(StoreLeaderRequest $request){
     
-    $validated = $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|string|unique:leaders,email',
-        'phoneNumber' => 'required|string|max:12',
-    ]);
-    $leader = Leaders::create($validated);
-    return response()->json($leader,201);
+    $leader = Leaders::create($request->validated());
+    return response()->json([
+        'success' => true,
+        'message' => 'Leader created successfully',
+        'data' => $leader
+    ], Response::HTTP_CREATED);
    }
    
    //update leader
-   public function update(Request $request, $id)
+   public function update(UpdateLeaderRequest $request, Leaders $leader)
    {
-    $leader = Leaders::findOrFail($id);
-    $validated = $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|string|email|unique:leaders,email,' . $id,
-        'phoneNumber' => 'required|string|max:12',
-    ]);
-    $leader->update($validated);
-    return response()->json($leader, 200);
+        $leader->update($request->validated());
+        return response()->json([
+            'success' => true,
+            'message' => 'Leader updated successfully',
+            'data' => $leader
+        ], Response::HTTP_OK);
    }
 
    //delete leader
-   public function destroy($id)
+   public function destroy(Leaders $leader)
    {
-    $leader = Leaders::findOrFail($id);
     $leader->delete();
-    return response()->json(null, 204);
+    return response()->json([
+        'success' => true,
+        'message' => 'Leader deleted successfully'
+    ], Response::HTTP_NO_CONTENT);
    }
 }

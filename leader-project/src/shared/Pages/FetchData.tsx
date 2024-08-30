@@ -46,15 +46,18 @@ const FetchData: React.FC = () => {
       <table className='min-w-full table-auto'>
         <thead>
           <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+          <th className="py-3 px-6 text-left">ID</th>
             <th className="py-3 px-6 text-left">Name</th>
             <th className="py-3 px-6 text-center">Email</th>
+            <th className="py-3 px-6 text-left">Role</th>
             <th className="py-3 px-6 text-center">Phone Number</th>
+            <th className="py-3 px-6 text-left">Password</th>
           </tr>
         </thead>
         <tbody className="text-gray-600 text-sm font-light">
           {isLoading && !fetching ? (
             <tr>
-              <td colSpan={3} className="py-3 px-6 text-center text-2xl">
+              <td colSpan={10} className="py-3 px-6 text-center text-2xl">
                 Fetch data now...
               </td>
             </tr>
@@ -67,6 +70,9 @@ const FetchData: React.FC = () => {
           ) : (
             leaders.map((leader) => (
               <tr key={leader.id} className="border-b border-gray-200 text-lg hover:bg-gray-100">
+                 <td className="py-3 px-6 text-center">
+                  <span>{leader.id}</span>
+                </td>
                 <td className="py-3 px-6 text-left whitespace-nowrap">
                   <div className="flex items-center">
                     <span>{leader.name}</span>
@@ -75,10 +81,20 @@ const FetchData: React.FC = () => {
                 <td className="py-3 px-6 text-center">
                   <span>{leader.email}</span>
                 </td>
+                <td className="py-3 px-6 text-left whitespace-nowrap">
+                  <div className="flex items-center">
+                    <span>{leader.role}</span>
+                  </div>
+                </td>
                 <td className="py-3 px-6 text-center">
                   <span className="bg-purple-200 text-purple-600 py-1 px-3 rounded-full text-lg">
                     {leader.phoneNumber}
                   </span>
+                </td>
+                <td className="py-3 px-6 text-left whitespace-nowrap">
+                  <div className="flex items-center">
+                    <span>secret hehe</span>
+                  </div>
                 </td>
               </tr>
             ))
